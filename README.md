@@ -1,3 +1,5 @@
+# Tic tac toe app created step by step along the React docs tutorial
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
