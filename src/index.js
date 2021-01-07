@@ -17,8 +17,12 @@ class Board extends React.Component {
 
         this.state = {
             squares: Array(9).fill(null),
+            previousSquares: Array(9).fill(null),
             xIsNext: true,
+            allowResetMove: false,
+            resetMoveSecondsLeft: 3,
             numOfMoves: 0,
+            intervalId: null,
         };
     }
 
@@ -38,13 +42,51 @@ class Board extends React.Component {
             return;
         }
 
+        this.stopTimer();
+        const previousSquares = squares.slice();
         squares[i] = this.state.xIsNext ? 'X' : 'O';
         this.setState({
             squares: squares,
+            previousSquares: previousSquares,
             xIsNext: !this.state.xIsNext,
+            allowResetMove: true,
+            resetMoveSecondsLeft: 3,
             numOfMoves: this.state.numOfMoves + 1,
         });
 
+        this.startTimer();
+    }
+
+    handleResetMove() {
+        this.stopTimer();
+        this.setState({
+            squares: this.state.previousSquares,
+            xIsNext: !this.state.xIsNext,
+            allowResetMove: false,
+            resetMoveSecondsLeft: 0,
+            numOfMoves: this.state.numOfMoves - 1,
+        })
+    }
+
+    startTimer() {
+        let intervalId = setInterval(() => {
+            if(this.state.resetMoveSecondsLeft > 1){
+                this.setState({resetMoveSecondsLeft: this.state.resetMoveSecondsLeft - 1})
+            }  else {
+                this.stopTimer();
+            }
+        }, 1000)
+
+        this.setState({intervalId: intervalId});
+    }
+
+    stopTimer() {
+        clearInterval(this.state.intervalId)
+        this.setState({intervalId: null})
+    }
+
+    componentWillUnmount() {
+        clearInterval(this.state.intervalId);
     }
 
     render () {
@@ -52,10 +94,16 @@ class Board extends React.Component {
         let status;
         if (winner) {
             status = 'Winner: ' + winner;
+            this.state.intervalId = null;
+            this.state.allowResetMove = false;
+            clearInterval(this.state.intervalId)
         } else {
             if (this.state.numOfMoves !== 9){
                 status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
             } else {
+                this.state.intervalId = null;
+                this.state.allowResetMove = false;
+                clearInterval(this.state.intervalId)
                 status = 'Draw.';
             }
         }
@@ -78,13 +126,22 @@ class Board extends React.Component {
                     {this.renderSquare(7)}
                     {this.renderSquare(8)}
                 </div>
+
+                <div>
+                    <button
+                        disabled={!this.state.allowResetMove || this.state.resetMoveSecondsLeft === 0}
+                        onClick={() => {this.handleResetMove()}}>
+                        RESET MOVE
+                    </button>
+                    {this.state.intervalId ? this.state.resetMoveSecondsLeft : ''}
+                </div>
             </div>
         );
     }
 }
 
 class Game extends React.Component {
-    render() {
+    render () {
         return (
             <div className="game">
                 <div className="game-board">
@@ -96,7 +153,7 @@ class Game extends React.Component {
                 </div>
             </div>
         );
-    }
+            }
 }
 
 
