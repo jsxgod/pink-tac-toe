@@ -1,7 +1,7 @@
 # Tic tac toe app created step by step along the React docs tutorial
 To show understanding of the completed tutorial I have implemented a button to undo moves and a timer that allows the moves to be undone only in a few seconds.
 
-TODO: CSS to accomplish better visuals.
+TODO: nicer CSS.
 
 # Getting Started with Create React App
 
