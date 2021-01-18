@@ -98,7 +98,7 @@ class Board extends React.Component {
             clearInterval(this.state.intervalId)
         } else {
             if (this.state.numOfMoves !== 9){
-                status = 'Next player:\t' + (this.state.xIsNext ? '❤️' : '🎀');
+                status = 'Next \tmove:\t' + (this.state.xIsNext ? '❤️' : '🎀');
             } else {
                 this.state.intervalId = null;
                 this.state.allowResetMove = false;
