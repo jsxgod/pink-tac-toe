@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
 
-function Square(props) {
+const Square = (props) => {
     return (
         <button className="square" onClick={props.onClick}>
             {props.value}
