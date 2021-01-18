@@ -6,7 +6,7 @@ import reportWebVitals from './reportWebVitals';
 const Square = (props) => {
     return (
         <button className="square" onClick={props.onClick}>
-            {props.value}
+            {props.value ? <p>{props.value}</p>: <p> </p>}
         </button>
     );
 }
@@ -82,7 +82,7 @@ class Board extends React.Component {
 
     stopTimer() {
         clearInterval(this.state.intervalId)
-        this.setState({intervalId: null})
+        this.setState({intervalId: null, allowResetMove: false})
     }
 
     componentWillUnmount() {
@@ -93,13 +93,13 @@ class Board extends React.Component {
         const winner = calculateWinner(this.state.squares);
         let status;
         if (winner) {
-            status = 'Winner: ' + winner;
+            status = 'Winner:\t' + winner;
             this.state.intervalId = null;
             this.state.allowResetMove = false;
             clearInterval(this.state.intervalId)
         } else {
             if (this.state.numOfMoves !== 9){
-                status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
+                status = 'Next player:\t' + (this.state.xIsNext ? 'X' : 'O');
             } else {
                 this.state.intervalId = null;
                 this.state.allowResetMove = false;
@@ -109,31 +109,31 @@ class Board extends React.Component {
         }
 
         return (
-            <div>
+            <div className="game-board">
                 <div className="status">{status}</div>
-                <div className="board-row">
-                    {this.renderSquare(0)}
-                    {this.renderSquare(1)}
-                    {this.renderSquare(2)}
+                <div className="board">
+                    <div className="board-row">
+                        {this.renderSquare(0)}
+                        {this.renderSquare(1)}
+                        {this.renderSquare(2)}
+                    </div>
+                    <div className="board-row">
+                        {this.renderSquare(3)}
+                        {this.renderSquare(4)}
+                        {this.renderSquare(5)}
+                    </div>
+                    <div className="board-row">
+                        {this.renderSquare(6)}
+                        {this.renderSquare(7)}
+                        {this.renderSquare(8)}
+                    </div>
                 </div>
-                <div className="board-row">
-                    {this.renderSquare(3)}
-                    {this.renderSquare(4)}
-                    {this.renderSquare(5)}
-                </div>
-                <div className="board-row">
-                    {this.renderSquare(6)}
-                    {this.renderSquare(7)}
-                    {this.renderSquare(8)}
-                </div>
-
-                <div>
-                    <button
+                <div className="button-container">
+                    <button className="reset-button"
                         disabled={!this.state.allowResetMove || this.state.resetMoveSecondsLeft === 0}
                         onClick={() => {this.handleResetMove()}}>
-                        RESET MOVE
                     </button>
-                    {this.state.intervalId ? this.state.resetMoveSecondsLeft : ''}
+                    <p className="timer">{this.state.intervalId ? this.state.resetMoveSecondsLeft : '0'}</p>
                 </div>
             </div>
         );
@@ -143,13 +143,13 @@ class Board extends React.Component {
 class Game extends React.Component {
     render () {
         return (
-            <div className="game">
-                <div className="game-board">
+            <div className="container">
+                <div className="game">
                     <Board />
                 </div>
-                <div className="game-info">
-                    <div>{/* STATUS */}</div>
-                    <ol>{/* TODO */}</ol>
+                
+                <div className="footer">
+                    Made with ❤️ by <a className="gh-link" href="https://github.com/jsxgod/tic-tac-toe-react">JS</a>
                 </div>
             </div>
         );
