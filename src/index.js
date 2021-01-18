@@ -43,7 +43,7 @@ class Board extends React.Component {
 
         this.stopTimer();
         const previousSquares = squares.slice();
-        squares[i] = this.state.xIsNext ? 'X' : 'O';
+        squares[i] = this.state.xIsNext ? '❤️' : '🎀';
         this.setState({
             squares: squares,
             previousSquares: previousSquares,
@@ -98,7 +98,7 @@ class Board extends React.Component {
             clearInterval(this.state.intervalId)
         } else {
             if (this.state.numOfMoves !== 9){
-                status = 'Next player:\t' + (this.state.xIsNext ? 'X' : 'O');
+                status = 'Next player:\t' + (this.state.xIsNext ? '❤️' : '🎀');
             } else {
                 this.state.intervalId = null;
                 this.state.allowResetMove = false;
@@ -148,7 +148,7 @@ class Game extends React.Component {
                 </div>
                 
                 <div className="footer">
-                    Made with ❤️ by <a className="gh-link" href="https://github.com/jsxgod/tic-tac-toe-react">JS</a>
+                    Made with ❤️💛💚💙💜 by <a className="gh-link" href="https://github.com/jsxgod/tic-tac-toe-react">JS</a>
                 </div>
             </div>
         );
