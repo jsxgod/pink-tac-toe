@@ -134,7 +134,7 @@ ol, ul {
 
   transition: 0.3s ease;
 
-  background-image: url('./Back_Arrow.svg');
+  background-image: url('./assets/Back_Arrow.svg');
   background-repeat: no-repeat;
   background-position: center;
   background-size: 100%;
