@@ -1,5 +1,5 @@
 import React from 'react';
-import { Square } from '../components'
+import { Square, Footer } from '../components'
 
 class Board extends React.Component {
     constructor(props) {
@@ -99,6 +99,8 @@ class Board extends React.Component {
         }
 
         return (
+            <div className="container">
+            <div className="game">
             <div className="game-board">
                 <div className="status">{status}</div>
                 <div className="board">
@@ -125,6 +127,9 @@ class Board extends React.Component {
                     </button>
                     <p className="timer">{this.state.intervalId ? this.state.resetMoveSecondsLeft : '0'}</p>
                 </div>
+            </div>
+            </div>
+            <Footer />
             </div>
         );
     }

@@ -1,15 +1,13 @@
 import React from 'react'
-import { Board, Footer } from '../components'
+import { Home, Board } from '../components'
+import { BrowserRouter as Router, Route } from 'react-router-dom';
 
 const Game = () => {
     return (
-            <div className="container">
-                <div className="game">
-                    <Board />
-                </div>
-
-                <Footer />
-            </div>
+        <Router>
+            <Route path="/" exact component={ Home } />
+            <Route path="/game" component={ Board } />
+        </Router>
         );
 }
 
