@@ -1,138 +1,74 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Square, Footer } from '../components'
 
-class Board extends React.Component {
-    constructor(props) {
-        super(props);
+const Board = () => {
+    const [squares, setSquares] = useState(Array(9).fill(null));
+    const [turn, setTurn] = useState(false);
+    const [piece, setPiece] = useState('❤️');
+    const [room, setRoom] = useState('');
+    const [opponent, setOpponent] = useState([]);
 
-        this.state = {
-            squares: Array(9).fill(null),
-            previousSquares: Array(9).fill(null),
-            xIsNext: true,
-            allowResetMove: false,
-            resetMoveSecondsLeft: 3,
-            numOfMoves: 0,
-            intervalId: null,
-        };
-    }
 
-    renderSquare(i) {
+
+    const renderSquare = (i) => {
         return (
             <Square
-                value = {this.state.squares[i]}
-                onClick = {() => this.handleClick(i)}
+                value = {squares[i]}
+                onClick = {() => handleClick(i)}
             />
         );
     }
 
-    handleClick(i) {
-        const squares = this.state.squares.slice();
+    const handleClick = (i) => {
+        const currentSquares = squares.slice();
 
-        if (squares[i] || calculateWinner(squares)){
+        if (!turn || currentSquares[i] || calculateWinner(currentSquares)){
             return;
         }
 
-        this.stopTimer();
-        const previousSquares = squares.slice();
-        squares[i] = this.state.xIsNext ? '❤️' : '🎀';
-        this.setState({
-            squares: squares,
-            previousSquares: previousSquares,
-            xIsNext: !this.state.xIsNext,
-            allowResetMove: true,
-            resetMoveSecondsLeft: 3,
-            numOfMoves: this.state.numOfMoves + 1,
-        });
+        const previousSquares = currentSquares.slice();
+        currentSquares[i] = piece;
 
-        this.startTimer();
+        setSquares(currentSquares);
+        setTurn(false);
     }
 
-    handleResetMove() {
-        this.stopTimer();
-        this.setState({
-            squares: this.state.previousSquares,
-            xIsNext: !this.state.xIsNext,
-            allowResetMove: false,
-            resetMoveSecondsLeft: 0,
-            numOfMoves: this.state.numOfMoves - 1,
-        })
-    }
+    const status = 'Waiting for other player...';
 
-    startTimer() {
-        let intervalId = setInterval(() => {
-            if(this.state.resetMoveSecondsLeft > 1){
-                this.setState({resetMoveSecondsLeft: this.state.resetMoveSecondsLeft - 1})
-            }  else {
-                this.stopTimer();
-            }
-        }, 1000)
-
-        this.setState({intervalId: intervalId});
-    }
-
-    stopTimer() {
-        clearInterval(this.state.intervalId)
-        this.setState({intervalId: null, allowResetMove: false})
-    }
-
-    componentWillUnmount() {
-        clearInterval(this.state.intervalId);
-    }
-
-    render () {
-        const winner = calculateWinner(this.state.squares);
-        let status;
-        if (winner) {
-            status = 'Winner:\t' + winner;
-            this.state.intervalId = null;
-            this.state.allowResetMove = false;
-            clearInterval(this.state.intervalId)
-        } else {
-            if (this.state.numOfMoves !== 9){
-                status = 'Next \tmove:\t' + (this.state.xIsNext ? '❤️' : '🎀');
-            } else {
-                this.state.intervalId = null;
-                this.state.allowResetMove = false;
-                clearInterval(this.state.intervalId)
-                status = 'Draw.';
-            }
-        }
-
-        return (
-            <div className="container">
+    return (
+        <div className="container">
             <div className="game">
-            <div className="game-board">
-                <div className="status">{status}</div>
-                <div className="board">
-                    <div className="board-row">
-                        {this.renderSquare(0)}
-                        {this.renderSquare(1)}
-                        {this.renderSquare(2)}
+                <div className="game-board">
+                    <div className="status">{status}</div>
+                    <div className="board">
+                        <div className="board-row">
+                            {renderSquare(0)}
+                            {renderSquare(1)}
+                            {renderSquare(2)}
+                        </div>
+                        <div className="board-row">
+                            {renderSquare(3)}
+                            {renderSquare(4)}
+                            {renderSquare(5)}
+                        </div>
+                        <div className="board-row">
+                            {renderSquare(6)}
+                            {renderSquare(7)}
+                            {renderSquare(8)}
+                        </div>
                     </div>
-                    <div className="board-row">
-                        {this.renderSquare(3)}
-                        {this.renderSquare(4)}
-                        {this.renderSquare(5)}
-                    </div>
-                    <div className="board-row">
-                        {this.renderSquare(6)}
-                        {this.renderSquare(7)}
-                        {this.renderSquare(8)}
+                    <div className="button-container">
+                        <button className="reset-button"
+                        disabled={true}
+                        onClick={() => null}>
+                        </button>
+                        <p className="timer">{'0'}</p>
                     </div>
                 </div>
-                <div className="button-container">
-                    <button className="reset-button"
-                        disabled={!this.state.allowResetMove || this.state.resetMoveSecondsLeft === 0}
-                        onClick={() => {this.handleResetMove()}}>
-                    </button>
-                    <p className="timer">{this.state.intervalId ? this.state.resetMoveSecondsLeft : '0'}</p>
-                </div>
-            </div>
             </div>
             <Footer />
-            </div>
-        );
-    }
+        </div>
+    )
 }
 
 function calculateWinner(squares) {
