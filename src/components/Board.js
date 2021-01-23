@@ -4,6 +4,8 @@ import queryString from 'query-string';
 
 import io from 'socket.io-client';
 
+let socketID = null;
+
 const Board = ( { location } ) => {
     const [squares, setSquares] = useState(Array(9).fill(null));
     const [turn, setTurn] = useState(false);
@@ -14,14 +16,12 @@ const Board = ( { location } ) => {
     const [message, setMessage] = useState('Waiting for other player...');
     const [gameEnd, setGameEnd] = useState(false);
 
-    let socketID = null;
     const ENDPOINT = 'http://localhost:4000';
 
     useEffect(() => {
         socketID = io(ENDPOINT);
 
         const {name, room} = queryString.parse(location.search);
-        console.log(queryString.parse(location.search));
 
         setName(name);
         setRoom(room);
@@ -29,17 +29,17 @@ const Board = ( { location } ) => {
         socketID.emit('joinRoom', { name: name, room: room }, (r) => {joinedCallback(r)})
 
         return () => {
-            socketID.off();
+
         }
     }, [ENDPOINT]);
 
     useEffect(() => {
         socketID.on('newGame', (data) => {
-            console.log('DATA: ', data);
             setPiece(data.piece);
             setTurn(data.turn);
             setMessage(data.message);
-        })
+            setOpponent(data.opponent);
+        });
 
         return () => {
 
@@ -48,7 +48,6 @@ const Board = ( { location } ) => {
 
     useEffect(() => {
         socketID.on('waiting', ({message}) => {
-            console.log(message);
             setMessage(message);
         })
 
@@ -56,6 +55,40 @@ const Board = ( { location } ) => {
 
         }
     }, []);
+
+
+    useEffect(() => {
+        if(socketID){
+            socketID.on('update', ({boardState, nextPiece}) => {
+                setSquares(boardState);
+                setTurn(piece === nextPiece);
+                if (piece === nextPiece){
+                    setMessage('Your turn: ' + piece);
+                } else {
+                    setMessage('Opponent\'s turn: ' + nextPiece);
+                }
+            });
+
+            socketID.on('winner', ({boardState, winner}) => {
+                setSquares(boardState);
+                setTurn(false);
+                if(piece === winner){
+                    setMessage('You win, ' + piece);
+                } else {
+                    setMessage('You lose, ' + piece);
+                }
+            });
+
+            socketID.on('draw', ({boardState, nextPiece}) => {
+                setSquares(boardState);
+                setTurn(false);
+                setMessage('Draw.');
+            });
+        }
+
+        return () => {
+        }
+    }, [piece])
 
     const joinedCallback = (r) => {
         console.log(r);
@@ -72,17 +105,12 @@ const Board = ( { location } ) => {
     }
 
     const handleClick = (i) => {
-        const currentSquares = squares.slice();
-
-        if (!turn || currentSquares[i] || calculateWinner(currentSquares)){
+        if (!turn){
             return;
+        } else {
+            socketID.emit('move', {index: i, piece: piece});
         }
-
-        const previousSquares = currentSquares.slice();
-        currentSquares[i] = piece;
-
-        setSquares(currentSquares);
-        setTurn(false);
+        
     }
 
     return (
