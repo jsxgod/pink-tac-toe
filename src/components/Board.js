@@ -1,12 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Square, Footer } from '../components'
+import queryString from 'query-string';
 
-const Board = () => {
+import io from 'socket.io-client';
+
+const Board = ( { location } ) => {
     const [squares, setSquares] = useState(Array(9).fill(null));
     const [turn, setTurn] = useState(false);
     const [piece, setPiece] = useState('❤️');
     const [room, setRoom] = useState('');
     const [opponent, setOpponent] = useState([]);
+    const [message, setMessage] = useState('Waiting for other player...');
+    const [gameEnd, setGameEnd] = useState(false);
+
+    let socketID = null;
+    const ENDPOINT = 'http://localhost:4000';
+
+    useEffect(() => {
+        socketID = io(ENDPOINT);
+
+        const {name, room} = queryString.parse(location.search);
+        console.log(name, room);
+
+        return () => {
+            socketID.off();
+        }
+    }, [ENDPOINT])
 
 
 
@@ -33,13 +52,11 @@ const Board = () => {
         setTurn(false);
     }
 
-    const status = 'Waiting for other player...';
-
     return (
         <div className="container">
             <div className="game">
                 <div className="game-board">
-                    <div className="status">{status}</div>
+                    <div className="status">{message}</div>
                     <div className="board">
                         <div className="board-row">
                             {renderSquare(0)}
