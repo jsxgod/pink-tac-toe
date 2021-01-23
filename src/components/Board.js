@@ -8,6 +8,7 @@ const Board = ( { location } ) => {
     const [squares, setSquares] = useState(Array(9).fill(null));
     const [turn, setTurn] = useState(false);
     const [piece, setPiece] = useState('❤️');
+    const [name, setName] = useState('');
     const [room, setRoom] = useState('');
     const [opponent, setOpponent] = useState([]);
     const [message, setMessage] = useState('Waiting for other player...');
@@ -20,13 +21,45 @@ const Board = ( { location } ) => {
         socketID = io(ENDPOINT);
 
         const {name, room} = queryString.parse(location.search);
-        console.log(name, room);
+        console.log(queryString.parse(location.search));
+
+        setName(name);
+        setRoom(room);
+
+        socketID.emit('joinRoom', { name: name, room: room }, (r) => {joinedCallback(r)})
 
         return () => {
             socketID.off();
         }
-    }, [ENDPOINT])
+    }, [ENDPOINT]);
 
+    useEffect(() => {
+        socketID.on('newGame', (data) => {
+            console.log('DATA: ', data);
+            setPiece(data.piece);
+            setTurn(data.turn);
+            setMessage(data.message);
+        })
+
+        return () => {
+
+        }
+    }, []);
+
+    useEffect(() => {
+        socketID.on('waiting', ({message}) => {
+            console.log(message);
+            setMessage(message);
+        })
+
+        return () => {
+
+        }
+    }, []);
+
+    const joinedCallback = (r) => {
+        console.log(r);
+    }
 
 
     const renderSquare = (i) => {
