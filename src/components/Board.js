@@ -12,9 +12,12 @@ const Board = ( { location } ) => {
     const [piece, setPiece] = useState('❤️');
     const [name, setName] = useState('');
     const [room, setRoom] = useState('');
-    const [opponent, setOpponent] = useState([]);
+    const [opponent, setOpponent] = useState('');
     const [message, setMessage] = useState('Waiting for other player...');
     const [gameEnd, setGameEnd] = useState(false);
+    const [myScore, setMyScore] = useState(0);
+    const [opponentScore, setOpponentScore] = useState(0);
+    const [rematchRequested, setRematchRequested] = useState(false);
 
     const ENDPOINT = 'http://localhost:4000';
 
@@ -37,6 +40,8 @@ const Board = ( { location } ) => {
         socketID.on('waiting', ({boardState, message}) => {
             setMessage(message);
             setSquares(boardState);
+            setMyScore(0);
+            setOpponentScore(0);
         })
 
         return () => {
@@ -51,6 +56,7 @@ const Board = ( { location } ) => {
             setTurn(data.turn);
             setMessage(data.message);
             setOpponent(data.opponent);
+            setGameEnd(false);
         });
 
         return () => {
@@ -69,8 +75,15 @@ const Board = ( { location } ) => {
         }
     }, []);
 
+    useEffect(() => {
+        socketID.on('request-rematch', () => {
+            alert('Rematch requested 1/2.');
+        });
 
+        return () => {
 
+        }
+    }, []);
 
     useEffect(() => {
         if(socketID){
@@ -81,6 +94,10 @@ const Board = ( { location } ) => {
                     setMessage('Your turn: ' + piece);
                 } else {
                     setMessage('Opponent\'s turn: ' + nextPiece);
+                }
+                if (boardState.every(square => square === null)){
+                    setGameEnd(false);
+                    setRematchRequested(false);
                 }
             });
 
@@ -94,6 +111,7 @@ const Board = ( { location } ) => {
                     } else {
                         setMessage('You lose: ' + piece);
                     }
+                    setGameEnd(true);
                 } else {
                     if (piece === nextPiece){
                         setMessage('Your turn: ' + piece);
@@ -106,9 +124,14 @@ const Board = ( { location } ) => {
             socketID.on('winner', ({boardState, winner}) => {
                 setSquares(boardState);
                 setTurn(false);
-                if(piece === winner){
+                setGameEnd(true);
+                console.log('my socket: ', socketID.id);
+                console.log('winner socket: ', winner);
+                if(socketID.id === winner){
+                    setMyScore(s => s + 1);
                     setMessage('You win, ' + piece);
                 } else {
+                    setOpponentScore(s => s + 1);
                     setMessage('You lose, ' + piece);
                 }
             });
@@ -152,11 +175,20 @@ const Board = ( { location } ) => {
         
     }
 
+    const handleRematch = () => {
+        socketID.emit('rematch');
+        setRematchRequested(true);
+    }
+
     return (
         <div className="container">
             <div className="game">
                 <div className="game-board">
                     <div className="status">{message}</div>
+                    <div className="score-container">
+                        <p className="score">{name} : {myScore}</p>
+                        <p className="score">{opponent} : {opponentScore}</p>
+                    </div>
                     <div className="board">
                         <div className="board-row">
                             {renderSquare(0)}
@@ -176,10 +208,10 @@ const Board = ( { location } ) => {
                     </div>
                     <div className="button-container">
                         <button className="reset-button"
-                        disabled={true}
-                        onClick={() => null}>
+                        disabled={!gameEnd || rematchRequested}
+                        onClick={() => handleRematch()}>
                         </button>
-                        <p className="timer">{'0'}</p>
+                        <p className="timer">{rematchRequested ? '✔️' : '...'}</p>
                     </div>
                 </div>
             </div>

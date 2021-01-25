@@ -163,9 +163,17 @@ ol, ul {
 }
 
 .status {
-  margin-bottom: 4rem;
+  margin-bottom: 1rem;
   font-size: 30px;
   text-align: center;
+}
+
+.score-container{
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  font-size: 2.5em;
+  margin-bottom: 1rem;
 }
 
 .board{
