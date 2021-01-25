@@ -261,10 +261,10 @@ ol, ul {
 
   transition: 0.3s ease;
 
-  background-image: url('./assets/Back_Arrow.svg');
+  background-image: url('./assets/rematch.svg');
   background-repeat: no-repeat;
   background-position: center;
-  background-size: 100%;
+  background-size: 50%;
 }
 
 .reset-button:hover{
