@@ -34,7 +34,19 @@ const Board = ( { location } ) => {
     }, [ENDPOINT]);
 
     useEffect(() => {
+        socketID.on('waiting', ({boardState, message}) => {
+            setMessage(message);
+            setSquares(boardState);
+        })
+
+        return () => {
+
+        }
+    }, []);
+
+    useEffect(() => {
         socketID.on('newGame', (data) => {
+            setSquares(data.boardState);
             setPiece(data.piece);
             setTurn(data.turn);
             setMessage(data.message);
@@ -47,14 +59,17 @@ const Board = ( { location } ) => {
     }, []);
 
     useEffect(() => {
-        socketID.on('waiting', ({message}) => {
-            setMessage(message);
-        })
+        socketID.on('roomIsFull', (message) => {
+            alert(message);
+            window.location.href = "/";
+        });
 
         return () => {
-
+            socketID.off();
         }
     }, []);
+
+
 
 
     useEffect(() => {
@@ -69,6 +84,25 @@ const Board = ( { location } ) => {
                 }
             });
 
+            socketID.on('reload', ({piece, boardState, nextPiece, winner}) => {
+                setSquares(boardState);
+                setPiece(piece)
+                setTurn(piece === nextPiece && winner === null);
+                if (winner){
+                    if (piece === winner){
+                        setMessage('You win: ' + piece);
+                    } else {
+                        setMessage('You lose: ' + piece);
+                    }
+                } else {
+                    if (piece === nextPiece){
+                        setMessage('Your turn: ' + piece);
+                    } else {
+                        setMessage('Opponent\'s turn: ' + nextPiece);
+                    }
+                }
+            });
+
             socketID.on('winner', ({boardState, winner}) => {
                 setSquares(boardState);
                 setTurn(false);
@@ -77,6 +111,11 @@ const Board = ( { location } ) => {
                 } else {
                     setMessage('You lose, ' + piece);
                 }
+            });
+
+            socketID.on('timeout-winner', ({disconnected, message}) => {
+                setTurn(false);
+                setMessage(message + piece);
             });
 
             socketID.on('draw', ({boardState, nextPiece}) => {
