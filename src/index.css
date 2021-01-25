@@ -28,6 +28,133 @@ ol, ul {
   margin: auto;
 }
 
+.login-container{
+  display: flex;
+  flex-direction: column;
+}
+
+.title-container{
+  padding-top: 1em;
+  padding-bottom: 1em;
+  font-size: 2.5rem;
+  color: #4F495F;
+  text-align: center;
+  margin-bottom: 2rem;
+  
+  position: relative;
+}
+
+.title{
+
+}
+
+/* From top left: right-down-left-up*/
+@keyframes moveAround {
+  0%{
+    top: 0%;
+    left: 0%;
+  }
+  25%{
+    top: 0%;
+    left: calc(100% - 3rem);
+  }
+  50%{
+    top: calc(100% - 3rem);
+    left: calc(100% - 3rem);
+  }
+  75%{
+    top: calc(100% - 3rem);
+    left: 0%;
+  }
+  100%{
+    top: 0%;
+    left: 0%;
+  }
+}
+
+/* From bottom right: left-up-right-down*/
+@keyframes moveAroundOpposite {
+  0%{
+    top: calc(100% - 3rem);
+    left: calc(100% - 3rem);
+  }
+  25%{
+    top: calc(100% - 3rem);
+    left: 0%;
+  }
+  50%{
+    top: 0%;
+    left: 0%;
+  }
+  75%{
+    top: 0%;
+    left: calc(100% - 3rem);
+  }
+  100%{
+    top: calc(100% - 3rem);
+    left: calc(100% - 3rem);
+  }
+}
+
+.emoji{
+  position: absolute;
+  animation: moveAround 10s infinite;
+}
+
+.emoji-opposite{
+  position: absolute;
+  top: 100%;
+  left: 100%;
+  animation: moveAroundOpposite 10s infinite;
+}
+
+.login-form{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 90%;
+
+}
+
+.login-input{
+  background: #ffd2d6;
+  border: 3px #4F495F solid;
+  border-radius: 50px;
+  color: #4F495F;
+  width: 50%;
+  padding: 15px 20px;
+  outline: none;
+  margin-bottom: 1rem;
+  opacity: 0.8;
+
+  transition: 0.4s;
+}
+
+.login-input:focus{
+  opacity: 1;
+  background: #FFC0EA;
+}
+
+.login-button{
+  width: 100%;
+  border: none;
+  color: #FFC0EA;
+  text-transform: uppercase;
+  text-decoration: none;
+  background: #4F495F;
+  opacity: 0.85;
+  padding: 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  outline: none;
+
+  transition: 0.4s;
+}
+
+.login-button:hover{
+  opacity: 1;
+}
+
 .game-board{
   display: flex;
   flex-direction: column;
