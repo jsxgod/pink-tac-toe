@@ -18,7 +18,7 @@ const Home = () => {
                         <p className="title">PinkTacToe</p>
                     </div>
                     <div className="login-form">
-                        <input className="login-input" placeholder="Name" type="text" onChange={(event) => setName(event.target.value)} />
+                        <input className="login-input" placeholder="Name" type="text" maxLength="12" onChange={(event) => setName(event.target.value)} />
                         <input className="login-input mt-20" placeholder="Room" type="text" onChange={(event) => setRoom(event.target.value)} />
                         
                         <Link onClick={event => (!name || !room) ? event.preventDefault() : null} to={`/game?name=${name}&room=${room}`}>
