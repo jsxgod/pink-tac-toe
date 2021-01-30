@@ -232,6 +232,10 @@ ol, ul {
   padding-bottom: 100%;
 }
 
+.square.clicked{
+  animation: none;
+}
+
 .content {
   position: absolute;
   width: 100%;
