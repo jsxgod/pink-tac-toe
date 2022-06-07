@@ -4,6 +4,10 @@ Additional features: Reverting last move, running timer that prevents the user f
 Website styled by myself with CSS.<br/>
 
 # Installation
+- Clone or download the server: https://github.com/jsxgod/pink-tac-toe-server (e.g. /server-repo)
+- ```cd server-repo```
+- ```npm install```
+- ```npm start```
 - Clone or Download the repository (e.g. /repo)
 - ```cd repo```
 - ```npm install```
